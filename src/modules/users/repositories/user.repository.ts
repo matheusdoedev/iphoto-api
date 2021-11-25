@@ -31,4 +31,20 @@ export class UserRepository extends Repository<User> {
       return (error as Error).message;
     }
   }
+
+  async getAllUsers(): Promise<User[] | string> {
+    try {
+      const users = await this.find().then((r) =>
+        r.map((user) => {
+          delete user.password;
+          delete user.salt;
+          return user;
+        }),
+      );
+
+      return users;
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
 }
