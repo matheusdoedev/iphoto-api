@@ -27,6 +27,7 @@
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.2",
+    "aws-sdk": "^2.1036.0",
     "bcrypt": "^5.0.1",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
