@@ -1,4 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { Photo } from 'src/modules/photos/entities/photo.entity';
 
 @Entity({
   name: 'users',
@@ -21,4 +31,13 @@ export class User extends BaseEntity {
 
   @Column({ nullable: false, type: 'boolean' })
   accepted_terms: boolean;
+
+  @OneToMany(() => Photo, (photo) => photo.user)
+  photos: Photo[];
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
