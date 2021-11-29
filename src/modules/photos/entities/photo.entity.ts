@@ -21,6 +21,9 @@ export class Photo extends BaseEntity {
   @Column({ nullable: true, type: 'varchar' })
   url?: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  image_key?: string;
+
   @ManyToOne(() => User, (user) => user.photos)
   user: User;
 

@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
+import * as fs from 'fs';
+
 import { ImageService } from 'src/shared/modules/image/image.service';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Photo } from './entities/photo.entity';
@@ -41,8 +44,24 @@ export class PhotosService {
       }
 
       photo.url = imageUploaded.Location;
+      photo.image_key = imageUploaded.Key;
       await photo.save();
+      fs.rm(file.path, undefined);
       return photo;
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  async deletePhoto(photoId: string): Promise<void | string> {
+    try {
+      const photo = await this.photoRepository.findOne({
+        where: { id: photoId },
+      });
+
+      await this.imageService.deleteImage(photo.image_key);
+
+      await photo.remove();
     } catch (error) {
       return (error as Error).message;
     }

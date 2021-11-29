@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Post,
   Put,
@@ -49,5 +50,19 @@ export class PhotosController {
     }
 
     return res.status(200).json(data);
+  }
+
+  @Delete(':photoId')
+  async deletePhoto(
+    @Param('photoId') photoId: string,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.photoService.deletePhoto(photoId);
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json({ message: 'Photo removed.' });
   }
 }
