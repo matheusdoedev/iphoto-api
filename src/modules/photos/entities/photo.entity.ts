@@ -2,8 +2,10 @@ import {
   BaseEntity,
   Column,
   Entity,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from 'src/modules/users/entities/user.entity';
@@ -13,12 +15,18 @@ export class Photo extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: false, type: 'varchar' })
   title: string;
 
-  @Column({ nullable: true })
-  url: string;
+  @Column({ nullable: true, type: 'varchar' })
+  url?: string;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (user) => user.photos)
   user: User;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
