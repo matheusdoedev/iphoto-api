@@ -35,8 +35,8 @@ export class PhotosController {
     return res.status(201).json(data);
   }
 
-  @Put('id')
-  @UseInterceptors(FileInterceptor('file'))
+  @Put(':id')
+  @UseInterceptors(FileInterceptor('image'))
   async putUpdatePhotoImage(
     @Param('id') photoId: string,
     @UploadedFile() file: Express.Multer.File,

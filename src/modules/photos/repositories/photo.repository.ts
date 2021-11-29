@@ -16,6 +16,7 @@ export class PhotoRepository extends Repository<Photo> {
 
       photo.title = title;
       photo.user = user;
+
       await photo.save();
       return photo;
     } catch (error) {
