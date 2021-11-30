@@ -1,7 +1,8 @@
 import { MulterModuleOptions } from '@nestjs/platform-express';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Photo } from 'src/modules/photos/entities/photo.entity';
 
+import { Album } from 'src/modules/albums/entities/album.entity';
+import { Photo } from 'src/modules/photos/entities/photo.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 
 interface IS3Options {
@@ -23,7 +24,7 @@ export default (): IConfiguration => ({
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    entities: [User, Photo],
+    entities: [User, Photo, Album],
   },
   multer: {
     dest: 'tmp/uploads',

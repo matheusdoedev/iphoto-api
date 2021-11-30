@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { Photo } from 'src/modules/photos/entities/photo.entity';
+import { Album } from 'src/modules/albums/entities/album.entity';
 
 @Entity({
   name: 'users',
@@ -31,6 +32,9 @@ export class User extends BaseEntity {
 
   @Column({ nullable: false, type: 'boolean' })
   accepted_terms: boolean;
+
+  @OneToMany(() => Album, (album) => album.user)
+  albums: Album[];
 
   @OneToMany(() => Photo, (photo) => photo.user)
   photos: Photo[];

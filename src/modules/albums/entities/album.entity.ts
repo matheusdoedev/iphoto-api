@@ -2,34 +2,29 @@ import {
   BaseEntity,
   Column,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { User } from 'src/modules/users/entities/user.entity';
-import { Album } from 'src/modules/albums/entities/album.entity';
+import { Photo } from 'src/modules/photos/entities/photo.entity';
 
-@Entity({ name: 'photos' })
-export class Photo extends BaseEntity {
+@Entity({ name: 'albums' })
+export class Album extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'varchar' })
   title: string;
 
-  @Column({ nullable: true, type: 'varchar' })
-  url?: string;
-
-  @Column({ nullable: true, type: 'varchar' })
-  image_key?: string;
-
-  @ManyToOne(() => User, (user) => user.photos)
+  @ManyToOne(() => User, (user) => user.albums)
   user: User;
 
-  @ManyToOne(() => Album, (album) => album.photos)
-  album: Album;
+  @OneToMany(() => Photo, (photo) => photo.album, { nullable: true })
+  photos?: Photo[];
 
   @CreateDateColumn()
   created_at: Date;
