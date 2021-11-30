@@ -4,6 +4,7 @@ import { SavePhotoDto } from '../photos/schemas/save-photo.dto';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Album } from './entities/album.entity';
 import { AlbumRepository } from './repositories/album.repository';
+import { UpdateAlbumDto } from './schemas/update-album.dto';
 
 @Injectable()
 export class AlbumsService {
@@ -22,6 +23,20 @@ export class AlbumsService {
       }
 
       return await this.albumRepository.createAlbum(saveAlbumDto, user);
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  async updateAlbum(updateAlbumDto: UpdateAlbumDto): Promise<Album | string> {
+    try {
+      const { albumId, title } = updateAlbumDto;
+      const album = await this.albumRepository.findOne(albumId);
+
+      album.title = title;
+
+      await album.save();
+      return album;
     } catch (error) {
       return (error as Error).message;
     }
