@@ -4,6 +4,8 @@ import { SavePhotoDto } from '../photos/schemas/save-photo.dto';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Album } from './entities/album.entity';
 import { AlbumRepository } from './repositories/album.repository';
+import { Photo } from '../photos/entities/photo.entity';
+import { PhotoRepository } from '../photos/repositories/photo.repository';
 import { UpdateAlbumDto } from './schemas/update-album.dto';
 
 @Injectable()
@@ -11,6 +13,7 @@ export class AlbumsService {
   constructor(
     private readonly albumRepository: AlbumRepository,
     private readonly userRepository: UserRepository,
+    private readonly photoRepository: PhotoRepository,
   ) {}
 
   async createAlbum(saveAlbumDto: SavePhotoDto): Promise<Album | string> {
@@ -35,6 +38,20 @@ export class AlbumsService {
           relations: ['user', 'photos'],
         })
         .then((r) => r.filter((album) => album.user.id === userId));
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  async indexAlbumPhotos(albumId: string): Promise<Photo[] | string> {
+    try {
+      return await this.photoRepository
+        .find({ relations: ['user', 'album'] })
+        .then((r) =>
+          r.filter(
+            (photo) => photo && photo.album && photo.album.id === albumId,
+          ),
+        );
     } catch (error) {
       return (error as Error).message;
     }

@@ -50,6 +50,20 @@ export class AlbumsController {
     return res.status(200).json(data);
   }
 
+  @Get('photos/:albumId')
+  async getUserPhotos(
+    @Param('albumId') albumId: string,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.albumService.indexAlbumPhotos(albumId);
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json(data);
+  }
+
   @Put(':albumId')
   async putUpdateAlbum(
     @Param('albumId') albumId: string,

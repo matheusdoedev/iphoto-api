@@ -23,5 +23,6 @@ import { UsersModule } from '../users/users.module';
   ],
   controllers: [PhotosController],
   providers: [PhotosService],
+  exports: [TypeOrmModule],
 })
 export class PhotosModule {}
