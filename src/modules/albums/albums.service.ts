@@ -28,6 +28,18 @@ export class AlbumsService {
     }
   }
 
+  async indexUserAlbums(userId: string): Promise<Album[] | string> {
+    try {
+      return await this.albumRepository
+        .find({
+          relations: ['user', 'photos'],
+        })
+        .then((r) => r.filter((album) => album.user.id === userId));
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
   async updateAlbum(updateAlbumDto: UpdateAlbumDto): Promise<Album | string> {
     try {
       const { albumId, title } = updateAlbumDto;

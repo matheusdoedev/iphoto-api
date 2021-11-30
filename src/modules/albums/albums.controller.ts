@@ -6,6 +6,7 @@ import {
   Post,
   Res,
   Put,
+  Get,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -33,6 +34,20 @@ export class AlbumsController {
     }
 
     return res.status(201).json(data);
+  }
+
+  @Get(':userId')
+  async getUserAlbums(
+    @Param('userId') userId: string,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.albumService.indexUserAlbums(userId);
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json(data);
   }
 
   @Put(':albumId')
