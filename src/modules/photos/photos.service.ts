@@ -23,6 +23,10 @@ export class PhotosService {
       const { userId } = savePhotoDto;
       const user = await this.userRepository.findOne({ where: { id: userId } });
 
+      if (!user) {
+        throw new Error('User with that id does not exists.');
+      }
+
       return await this.photoRepository.createPhoto(savePhotoDto, user);
     } catch (error) {
       return (error as Error).message;
@@ -62,6 +66,26 @@ export class PhotosService {
       await this.imageService.deleteImage(photo.image_key);
 
       await photo.remove();
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  async indexUserPhotos(userId: string): Promise<Photo[] | string> {
+    try {
+      const checkIfUserExists = await this.userRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (!checkIfUserExists) {
+        throw new Error('User with that id does not exists.');
+      }
+
+      return await this.photoRepository
+        .find({
+          relations: ['user'],
+        })
+        .then((r) => r.filter((photo) => photo.user.id === userId));
     } catch (error) {
       return (error as Error).message;
     }
