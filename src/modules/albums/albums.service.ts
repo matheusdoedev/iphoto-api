@@ -26,4 +26,14 @@ export class AlbumsService {
       return (error as Error).message;
     }
   }
+
+  async removeAlbum(albumId: string): Promise<void | string> {
+    try {
+      const album = await this.albumRepository.findOne(albumId);
+
+      await album.remove();
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
 }
