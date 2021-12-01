@@ -1,29 +1,74 @@
-# Scope
+# Iphoto API
 
-## Entities
+![Repo Size][repo-size]
+![Top Languages][top-languages]
+![Repo License][repo-license]
 
-- User { id: number, name: string, email: string, password: string },
-- Photo { id: number, title: string, url: string },
-- Album { id: number, name: string, photos: Photo[] }
+This is a API REST for Iphoto application
 
-## Functionalities
+## Get Started
 
-- [x] user signup
-- [x] user signin
-- [x] create photo
-- [x] update photo image
-- [x] delete photo
-- [x] index user photos v0.7.0
-- [x] create album v0.8.0
-- [x] delete album v0.9.0
-- [x] update album v0.10.0
-- [x] index user albums v0.11.0
-- [x] index album photos
-- [] add photos to albums
-- [] move photos between albums
-- [] get photo by id
-- [] get album by id
-- [] user can delete his account v0.12.0
-- [] update README.md and assign a LICENSE
-- [] end authentication implementation v1.0.0
-- [] forgot/reset password feature v1.1.0
+Install dependencies:
+
+```
+yarn
+
+npm install
+```
+
+Pre-steps:
+
+1. Run a Postgres database and put crendetials in .env
+2. Create a bucket in AWS S3 to use in, and put credentials in .env
+
+Development:
+
+```sh
+npm run start:dev
+
+yarn start:dev
+```
+
+Production:
+
+```sh
+npm start
+
+yarn start
+```
+
+Build:
+
+```sh
+npm run build
+
+yarn build
+```
+
+## About
+
+- This is a API Rest made in Nest.js with TypeScript for Iphoto application.
+- Iphoto is a web app where user can save his photos and manage in albums.
+
+### Technologies
+
+- [Nest.js](https://docs.nestjs.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Postgres](https://www.postgresql.org/docs/)
+- [Typeorm](https://typeorm.io/#/)
+- [AWS S3](https://docs.aws.amazon.com/s3/index.html)
+- [Bcrypt](https://www.npmjs.com/package/bcrypt)
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/fooBar`)
+3. Commit your changes following the convential commit standard (`git commit -am 'feat: Add some fooBar'`)
+4. Push to the branch (`git push origin feature/fooBar`)
+5. Create a new Pull Request
+
+<!-- Markdown link & img dfn's -->
+
+[top-languages]: https://img.shields.io/github/languages/top/matheusdoedev/iphoto-api?style=flat-square
+[repo-size]: https://img.shields.io/github/repo-size/matheusdoedev/iphoto-api?style=flat-square
+[repo-license]: https://img.shields.io/github/license/matheusdoedev/iphoto-api?style=flat-square
