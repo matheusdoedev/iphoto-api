@@ -14,6 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { PhotosService } from './photos.service';
 import { SavePhotoDto } from './schemas/save-photo.dto';
+import { UpdatePhotoDto } from './schemas/update-photo.dto';
 
 @Controller('photos')
 export class PhotosController {
@@ -38,6 +39,24 @@ export class PhotosController {
   }
 
   @Put(':id')
+  async putUpdatePhoto(
+    @Param('photoId') photoId: string,
+    @Body() updatePhotoDto: UpdatePhotoDto,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.photoService.updatePhoto({
+      photoId,
+      ...updatePhotoDto,
+    });
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json(data);
+  }
+
+  @Put('image/:id')
   @UseInterceptors(FileInterceptor('image'))
   async putUpdatePhotoImage(
     @Param('id') photoId: string,

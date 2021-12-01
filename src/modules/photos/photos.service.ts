@@ -9,6 +9,7 @@ import { UserRepository } from '../users/repositories/user.repository';
 import { Photo } from './entities/photo.entity';
 import { PhotoRepository } from './repositories/photo.repository';
 import { SavePhotoDto } from './schemas/save-photo.dto';
+import { UpdatePhotoDto } from './schemas/update-photo.dto';
 
 @Injectable()
 export class PhotosService {
@@ -34,6 +35,19 @@ export class PhotosService {
       }
 
       return await this.photoRepository.createPhoto(savePhotoDto, user, album);
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  async updatePhoto(updatePhotoDto: UpdatePhotoDto): Promise<Photo | string> {
+    try {
+      const { albumId } = updatePhotoDto;
+      const album: Album | undefined = albumId
+        ? await this.albumRepository.findOne(albumId)
+        : undefined;
+
+      return await this.photoRepository.updatePhoto(updatePhotoDto, album);
     } catch (error) {
       return (error as Error).message;
     }
