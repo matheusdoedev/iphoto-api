@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 
 import { ImageService } from 'src/shared/modules/image/image.service';
+import { Album } from '../albums/entities/album.entity';
+import { AlbumRepository } from '../albums/repositories/album.repository';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Photo } from './entities/photo.entity';
 import { PhotoRepository } from './repositories/photo.repository';
@@ -14,20 +16,24 @@ export class PhotosService {
     private readonly photoRepository: PhotoRepository,
     private readonly userRepository: UserRepository,
     private readonly imageService: ImageService,
+    private readonly albumRepository: AlbumRepository,
   ) {}
 
   async createPhoto(
     savePhotoDto: SavePhotoDto,
   ): Promise<Omit<Photo, 'url'> | string> {
     try {
-      const { userId } = savePhotoDto;
-      const user = await this.userRepository.findOne({ where: { id: userId } });
+      const { userId, albumId } = savePhotoDto;
+      const user = await this.userRepository.findOne(userId);
+      const album: Album | undefined = albumId
+        ? await this.albumRepository.findOne(albumId)
+        : undefined;
 
       if (!user) {
         throw new Error('User with that id does not exists.');
       }
 
-      return await this.photoRepository.createPhoto(savePhotoDto, user);
+      return await this.photoRepository.createPhoto(savePhotoDto, user, album);
     } catch (error) {
       return (error as Error).message;
     }

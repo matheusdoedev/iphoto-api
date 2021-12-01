@@ -15,5 +15,6 @@ import { AlbumRepository } from './repositories/album.repository';
   ],
   controllers: [AlbumsController],
   providers: [AlbumsService],
+  exports: [TypeOrmModule],
 })
 export class AlbumsModule {}
