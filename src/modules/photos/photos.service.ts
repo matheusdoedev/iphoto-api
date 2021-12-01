@@ -110,4 +110,14 @@ export class PhotosService {
       return (error as Error).message;
     }
   }
+
+  async showPhotoById(photoId: string): Promise<Photo | string> {
+    try {
+      return await this.photoRepository.findOne(photoId, {
+        relations: ['user', 'album'],
+      });
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
 }

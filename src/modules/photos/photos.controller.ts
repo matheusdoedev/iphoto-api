@@ -86,12 +86,26 @@ export class PhotosController {
     return res.status(200).json({ message: 'Photo removed.' });
   }
 
-  @Get(':userId')
+  @Get('user/:userId')
   async getUserPhotos(
     @Param('userId') userId: string,
     @Res() res: Response,
   ): Promise<Response<unknown, Record<string, unknown>> | string> {
     const data = await this.photoService.indexUserPhotos(userId);
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json(data);
+  }
+
+  @Get(':photoId')
+  async getPhotoById(
+    @Param('photoId') photoId: string,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.photoService.showPhotoById(photoId);
 
     if (typeof data === 'string') {
       return res.status(400).json({ message: data });
