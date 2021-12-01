@@ -31,6 +31,16 @@ export class AlbumsService {
     }
   }
 
+  async showAlbumById(albumId: string): Promise<Album | string> {
+    try {
+      return await this.albumRepository.findOne(albumId, {
+        relations: ['photos', 'user'],
+      });
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
   async indexUserAlbums(userId: string): Promise<Album[] | string> {
     try {
       return await this.albumRepository

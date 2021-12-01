@@ -36,7 +36,21 @@ export class AlbumsController {
     return res.status(201).json(data);
   }
 
-  @Get(':userId')
+  @Get(':albumId')
+  async getAlbumByID(
+    @Param('albumId') albumId: string,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.albumService.showAlbumById(albumId);
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(201).json(data);
+  }
+
+  @Get('user/:userId')
   async getUserAlbums(
     @Param('userId') userId: string,
     @Res() res: Response,
