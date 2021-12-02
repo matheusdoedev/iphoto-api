@@ -1,0 +1,1 @@
+web: NODE_ENV=production NPM_CONFIG_PRODUCTION=false yarn start:prod
