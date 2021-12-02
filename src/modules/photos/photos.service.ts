@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import { ImageService } from 'src/shared/modules/image/image.service';
 import { Album } from '../albums/entities/album.entity';
 import { AlbumRepository } from '../albums/repositories/album.repository';
+import { User } from '../users/entities/user.entity';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Photo } from './entities/photo.entity';
 import { PhotoRepository } from './repositories/photo.repository';
@@ -24,8 +25,7 @@ export class PhotosService {
     savePhotoDto: SavePhotoDto,
   ): Promise<Omit<Photo, 'url'> | string> {
     try {
-      const { userId, albumId } = savePhotoDto;
-      const user = await this.userRepository.findOne(userId);
+      const { user, albumId } = savePhotoDto;
       const album: Album | undefined = albumId
         ? await this.albumRepository.findOne(albumId)
         : undefined;
@@ -91,13 +91,9 @@ export class PhotosService {
     }
   }
 
-  async indexUserPhotos(userId: string): Promise<Photo[] | string> {
+  async indexUserPhotos(user: User): Promise<Photo[] | string> {
     try {
-      const checkIfUserExists = await this.userRepository.findOne({
-        where: { id: userId },
-      });
-
-      if (!checkIfUserExists) {
+      if (!user) {
         throw new Error('User with that id does not exists.');
       }
 
@@ -105,7 +101,7 @@ export class PhotosService {
         .find({
           relations: ['user'],
         })
-        .then((r) => r.filter((photo) => photo.user.id === userId));
+        .then((r) => r.filter((photo) => photo.user.id === user.id));
     } catch (error) {
       return (error as Error).message;
     }

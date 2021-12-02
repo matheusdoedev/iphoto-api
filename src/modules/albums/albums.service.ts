@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { SavePhotoDto } from '../photos/schemas/save-photo.dto';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Album } from './entities/album.entity';
 import { AlbumRepository } from './repositories/album.repository';
 import { Photo } from '../photos/entities/photo.entity';
 import { PhotoRepository } from '../photos/repositories/photo.repository';
 import { UpdateAlbumDto } from './schemas/update-album.dto';
+import { SaveAlbumDto } from './schemas/save-album.dto';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AlbumsService {
@@ -16,10 +17,9 @@ export class AlbumsService {
     private readonly photoRepository: PhotoRepository,
   ) {}
 
-  async createAlbum(saveAlbumDto: SavePhotoDto): Promise<Album | string> {
+  async createAlbum(saveAlbumDto: SaveAlbumDto): Promise<Album | string> {
     try {
-      const { userId } = saveAlbumDto;
-      const user = await this.userRepository.findOne(userId);
+      const { user } = saveAlbumDto;
 
       if (!user) {
         throw new Error('User with that id does not exists.');
@@ -41,13 +41,13 @@ export class AlbumsService {
     }
   }
 
-  async indexUserAlbums(userId: string): Promise<Album[] | string> {
+  async indexUserAlbums(user: User): Promise<Album[] | string> {
     try {
       return await this.albumRepository
         .find({
           relations: ['user', 'photos'],
         })
-        .then((r) => r.filter((album) => album.user.id === userId));
+        .then((r) => r.filter((album) => album.user.id === user.id));
     } catch (error) {
       return (error as Error).message;
     }
