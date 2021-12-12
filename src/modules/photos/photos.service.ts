@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 
 import { ImageService } from 'src/shared/modules/image/image.service';
+import { PaginatedResultDto } from 'src/shared/schemas/pagination-result.dto';
+import { PaginationDto } from 'src/shared/schemas/pagination.dto';
+import getLastPage from 'src/shared/utils/get-last-page';
 import { Album } from '../albums/entities/album.entity';
 import { AlbumRepository } from '../albums/repositories/album.repository';
 import { User } from '../users/entities/user.entity';
@@ -91,17 +94,33 @@ export class PhotosService {
     }
   }
 
-  async indexUserPhotos(user: User): Promise<Photo[] | string> {
+  async indexUserPhotos(
+    user: User,
+    getUserPhotosDto: PaginationDto,
+  ): Promise<PaginatedResultDto<Photo> | string> {
     try {
+      const { page, perPage } = getUserPhotosDto;
+
       if (!user) {
         throw new Error('User with that id does not exists.');
       }
 
-      return await this.photoRepository
+      const photos = await this.photoRepository
         .find({
           relations: ['user'],
         })
         .then((r) => r.filter((photo) => photo.user.id === user.id));
+      const total = photos.length;
+      const includedItems = page * perPage;
+      const lastPage = getLastPage(total, perPage);
+
+      return {
+        page,
+        perPage,
+        total,
+        lastPage,
+        data: photos.filter((photo, index) => photo && index < includedItems),
+      };
     } catch (error) {
       return (error as Error).message;
     }
