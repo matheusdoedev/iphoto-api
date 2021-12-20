@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import { ImageService } from 'src/shared/modules/image/image.service';
 import { PaginatedResultDto } from 'src/shared/schemas/pagination-result.dto';
 import { PaginationDto } from 'src/shared/schemas/pagination.dto';
+import generatePagination from 'src/shared/utils/generate-pagination';
 import getLastPage from 'src/shared/utils/get-last-page';
 import { Album } from '../albums/entities/album.entity';
 import { AlbumRepository } from '../albums/repositories/album.repository';
@@ -110,17 +111,8 @@ export class PhotosService {
           relations: ['user'],
         })
         .then((r) => r.filter((photo) => photo.user.id === user.id));
-      const total = photos.length;
-      const includedItems = page * perPage;
-      const lastPage = getLastPage(total, perPage);
 
-      return {
-        page,
-        perPage,
-        total,
-        lastPage,
-        data: photos.filter((photo, index) => photo && index < includedItems),
-      };
+      return generatePagination<Photo>(photos, page, perPage);
     } catch (error) {
       return (error as Error).message;
     }
