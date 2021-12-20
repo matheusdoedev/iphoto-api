@@ -9,10 +9,12 @@ import {
   Put,
   Get,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
+import { PaginationDto } from 'src/shared/schemas/pagination.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { SavePhotoDto } from '../photos/schemas/save-photo.dto';
 import { User } from '../users/entities/user.entity';
 import { AlbumsService } from './albums.service';
@@ -25,11 +27,15 @@ export class AlbumsController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserAlbums(
+    @Query() getUserAlbumsDto: PaginationDto,
     @Res() res: Response,
     @Req() req: Request,
   ): Promise<Response<unknown, Record<string, unknown>> | string> {
     const user = req.user as User;
-    const data = await this.albumService.indexUserAlbums(user);
+    const data = await this.albumService.indexUserAlbums(
+      user,
+      getUserAlbumsDto,
+    );
 
     if (typeof data === 'string') {
       return res.status(400).json({ message: data });

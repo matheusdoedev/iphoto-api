@@ -8,6 +8,9 @@ import { PhotoRepository } from '../photos/repositories/photo.repository';
 import { UpdateAlbumDto } from './schemas/update-album.dto';
 import { SaveAlbumDto } from './schemas/save-album.dto';
 import { User } from '../users/entities/user.entity';
+import generatePagination from '../../shared/utils/generate-pagination';
+import { PaginationDto } from 'src/shared/schemas/pagination.dto';
+import { PaginatedResultDto } from 'src/shared/schemas/pagination-result.dto';
 
 @Injectable()
 export class AlbumsService {
@@ -41,13 +44,20 @@ export class AlbumsService {
     }
   }
 
-  async indexUserAlbums(user: User): Promise<Album[] | string> {
+  async indexUserAlbums(
+    user: User,
+    getUserAlbums: PaginationDto,
+  ): Promise<PaginatedResultDto<Album> | string> {
     try {
-      return await this.albumRepository
+      const { page, perPage } = getUserAlbums;
+
+      const albums = await this.albumRepository
         .find({
           relations: ['user', 'photos'],
         })
         .then((r) => r.filter((album) => album.user.id === user.id));
+
+      return generatePagination<Album>(albums, page, perPage);
     } catch (error) {
       return (error as Error).message;
     }
