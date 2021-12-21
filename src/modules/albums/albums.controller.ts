@@ -25,6 +25,22 @@ export class AlbumsController {
   constructor(private readonly albumService: AlbumsService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get('user/all')
+  async getAllUserAlbums(
+    @Res() res: Response,
+    @Req() req: Request,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const user = req.user as User;
+    const data = await this.albumService.indexAllUserAlbums(user);
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserAlbums(
     @Query() getUserAlbumsDto: PaginationDto,
