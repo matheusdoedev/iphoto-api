@@ -15,10 +15,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
-import { PaginationDto } from 'src/shared/schemas/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { User } from '../users/entities/user.entity';
 import { PhotosService } from './photos.service';
+import { GetUserPhotosDto } from './schemas/get-user-photos.dto';
 import { SavePhotoDto } from './schemas/save-photo.dto';
 import { UpdatePhotoDto } from './schemas/update-photo.dto';
 
@@ -99,7 +99,7 @@ export class PhotosController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserPhotos(
-    @Query() getUserPhotosDto: PaginationDto,
+    @Query() getUserPhotosDto: GetUserPhotosDto,
     @Res() res: Response,
     @Req() req: Request,
   ): Promise<Response<unknown, Record<string, unknown>> | string> {

@@ -4,15 +4,14 @@ import * as fs from 'fs';
 
 import { ImageService } from 'src/shared/modules/image/image.service';
 import { PaginatedResultDto } from 'src/shared/schemas/pagination-result.dto';
-import { PaginationDto } from 'src/shared/schemas/pagination.dto';
 import generatePagination from 'src/shared/utils/generate-pagination';
-import getLastPage from 'src/shared/utils/get-last-page';
 import { Album } from '../albums/entities/album.entity';
 import { AlbumRepository } from '../albums/repositories/album.repository';
 import { User } from '../users/entities/user.entity';
 import { UserRepository } from '../users/repositories/user.repository';
 import { Photo } from './entities/photo.entity';
 import { PhotoRepository } from './repositories/photo.repository';
+import { GetUserPhotosDto } from './schemas/get-user-photos.dto';
 import { SavePhotoDto } from './schemas/save-photo.dto';
 import { UpdatePhotoDto } from './schemas/update-photo.dto';
 
@@ -97,20 +96,24 @@ export class PhotosService {
 
   async indexUserPhotos(
     user: User,
-    getUserPhotosDto: PaginationDto,
+    getUserPhotosDto: GetUserPhotosDto,
   ): Promise<PaginatedResultDto<Photo> | string> {
     try {
-      const { page, perPage } = getUserPhotosDto;
+      const { page, perPage, albumId } = getUserPhotosDto;
 
       if (!user) {
         throw new Error('User with that id does not exists.');
       }
 
-      const photos = await this.photoRepository
+      let photos = await this.photoRepository
         .find({
           relations: ['user'],
         })
         .then((r) => r.filter((photo) => photo.user.id === user.id));
+
+      if (albumId) {
+        photos = photos.filter((photo) => photo.album.id === albumId);
+      }
 
       return generatePagination<Photo>(photos, page, perPage);
     } catch (error) {
