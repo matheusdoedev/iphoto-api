@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
+import { PaginationDto } from 'src/shared/schemas/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { User } from '../users/entities/user.entity';
 import { PhotosService } from './photos.service';
@@ -99,7 +100,7 @@ export class PhotosController {
   @UseGuards(JwtAuthGuard)
   @Get('user')
   async getUserPhotos(
-    @Query() getUserPhotosDto: GetUserPhotosDto,
+    @Query() getUserPhotosDto: PaginationDto,
     @Res() res: Response,
     @Req() req: Request,
   ): Promise<Response<unknown, Record<string, unknown>> | string> {
@@ -107,6 +108,25 @@ export class PhotosController {
     const data = await this.photoService.indexUserPhotos(
       user,
       getUserPhotosDto,
+    );
+
+    if (typeof data === 'string') {
+      return res.status(400).json({ message: data });
+    }
+
+    return res.status(200).json(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('album/:albumId')
+  async getAlbumPhotos(
+    @Query() getAlbumPhotosDto: PaginationDto,
+    @Param('albumId') albumId: string,
+    @Res() res: Response,
+  ): Promise<Response<unknown, Record<string, unknown>> | string> {
+    const data = await this.photoService.indexAlbumPhotos(
+      albumId,
+      getAlbumPhotosDto,
     );
 
     if (typeof data === 'string') {

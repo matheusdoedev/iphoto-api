@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 import { ImageService } from 'src/shared/modules/image/image.service';
 import { PaginatedResultDto } from 'src/shared/schemas/pagination-result.dto';
+import { PaginationDto } from 'src/shared/schemas/pagination.dto';
 import generatePagination from 'src/shared/utils/generate-pagination';
 import { Album } from '../albums/entities/album.entity';
 import { AlbumRepository } from '../albums/repositories/album.repository';
@@ -96,24 +97,43 @@ export class PhotosService {
 
   async indexUserPhotos(
     user: User,
-    getUserPhotosDto: GetUserPhotosDto,
+    getUserPhotosDto: PaginationDto,
   ): Promise<PaginatedResultDto<Photo> | string> {
     try {
-      const { page, perPage, albumId } = getUserPhotosDto;
+      const { page, perPage } = getUserPhotosDto;
 
       if (!user) {
         throw new Error('User with that id does not exists.');
       }
 
-      let photos = await this.photoRepository
+      const photos = await this.photoRepository
         .find({
-          relations: ['user'],
+          relations: ['user', 'album'],
         })
         .then((r) => r.filter((photo) => photo.user.id === user.id));
 
-      if (albumId) {
-        photos = photos.filter((photo) => photo.album.id === albumId);
+      return generatePagination<Photo>(photos, page, perPage);
+    } catch (error) {
+      return (error as Error).message;
+    }
+  }
+
+  async indexAlbumPhotos(
+    albumId: string,
+    getAlbumPhotosDto: PaginationDto,
+  ): Promise<PaginatedResultDto<Photo> | string> {
+    try {
+      const { page, perPage } = getAlbumPhotosDto;
+
+      if (!albumId) {
+        throw new Error('Album id is invalid.');
       }
+
+      const photos = await this.photoRepository
+        .find({
+          relations: ['album', 'user'],
+        })
+        .then((r) => r.filter((photo) => photo.album.id === albumId));
 
       return generatePagination<Photo>(photos, page, perPage);
     } catch (error) {
